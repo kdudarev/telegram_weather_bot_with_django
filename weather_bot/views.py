@@ -3,7 +3,7 @@ import asyncio
 from django.shortcuts import redirect
 from django.views.generic import ListView
 
-from bot.main import send_weather
+from main_bot import send_weather
 from weather_bot.models import Profile
 
 

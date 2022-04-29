@@ -2,7 +2,7 @@ from datetime import datetime
 
 import requests
 
-from bot import config
+from tg_bot import config
 
 
 class Weather:

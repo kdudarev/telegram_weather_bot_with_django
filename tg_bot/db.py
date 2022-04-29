@@ -1,6 +1,6 @@
 import psycopg2
 
-from bot import config
+from tg_bot import config
 
 
 class DataBaseManager:

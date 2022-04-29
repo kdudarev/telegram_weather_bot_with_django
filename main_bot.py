@@ -1,15 +1,17 @@
-from datetime import datetime
+import os
+import sys
 
-import requests
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import executor
 
-from bot import config
-from bot.db import DataBaseManager
-from bot.weather import Weather
+from tg_bot import config
+from tg_bot.db import DataBaseManager
+from tg_bot.weather import Weather
+
+sys.path.insert(1, os.getcwd())
 
 try:
     db = DataBaseManager()
