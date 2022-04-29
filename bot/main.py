@@ -7,8 +7,9 @@ from aiogram.dispatcher import Dispatcher, FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import executor
 
-import config
-from db import DataBaseManager
+from bot import config
+from bot.db import DataBaseManager
+from bot.weather import Weather
 
 try:
     db = DataBaseManager()
@@ -18,6 +19,8 @@ except Exception as ex:
 bot = Bot(token=config.BOT_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
+
+weather = Weather()
 
 
 class Form(StatesGroup):
@@ -29,7 +32,7 @@ async def start(message: types.Message):
     user_id = message.from_user.id
     if str(user_id) in db.get_user(user_id):
         keyboard = types.ReplyKeyboardMarkup(
-            resize_keyboard=True, one_time_keyboard=True,
+            resize_keyboard=True,
             input_field_placeholder='Введите название города: '
         )
         button = 'Москва'
@@ -68,50 +71,15 @@ async def register(message: types.Message, state: FSMContext):
 
 @dp.message_handler()
 async def get_weather(message: types.Message):
-    code_to_smile = {
-        'Clear': 'Ясно \U00002600',
-        'Clouds': 'Облачно \U00002601',
-        'Rain': 'Дождь \U00002614',
-        'Drizzle': 'Дождь \U00002614',
-        'Thunderstorm': 'Гроза \U000026A1',
-        'Snow': 'Снег \U0001F328',
-        'Mist': 'Туман \U0001F32B'
-    }
-
     try:
-        r = requests.get(
-            f'https://api.openweathermap.org/data/2.5/weather?q={message.text}'
-            f'&appid={config.WEATHER_TOKEN}&units=metric'
-        )
-        data = r.json()
-
-        city = data['name']
-        current_weather = data['main']['temp']
-
-        weather_description = data['weather'][0]['main']
-        if weather_description in code_to_smile:
-            wd = code_to_smile[weather_description]
-        else:
-            wd = ''
-
-        humidity = data['main']['humidity']
-        pressure = data['main']['pressure']
-        wind = data['wind']['speed']
-        sunrise_timestamp = datetime.fromtimestamp(data['sys']['sunrise'])
-        sunset_timestamp = datetime.fromtimestamp(data['sys']['sunset'])
-        length_of_the_day = sunset_timestamp - sunrise_timestamp
-
-        await message.reply(
-            f'Сегодня: {datetime.now().strftime("%d-%m-%Y %H:%M")}\n'
-            f'Погода в городе: {city}\nТемпература: {current_weather}°C {wd}\n'
-            f'Влажность: {humidity}%\nДавление: {pressure} мм.рт.ст.\n'
-            f'Ветер: {wind}м/с\nВосход солнца: {sunrise_timestamp}\n'
-            f'Закат солнца: {sunset_timestamp}\n'
-            f'Продолжительность дня: {length_of_the_day}\n'
-        )
+        await message.reply(weather.get_weather(message.text))
     except Exception as e:
         print('[INFO] The user entered an invalid city name', e)
         await message.reply("\U00002620 Проверьте название города \U00002620")
+
+
+async def send_weather(id_user, text):
+    await bot.send_message(id_user, weather.get_weather(text))
 
 
 if __name__ == '__main__':

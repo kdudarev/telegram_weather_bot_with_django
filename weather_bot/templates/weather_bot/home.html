@@ -1,10 +1,20 @@
 {% block content %}
+    <h1>WeatherBot</h1>
+    <h2><a href="https://t.me/w_telebot">
+        Зарегистрироваться в телеграм боте</a></h2>
+    </br>
+    <h1>Зарегистрированные пользователи:</h1>
     {% for p in object_list %}
         <div>
-            <h1>Registered users of the weather telegram bot:</h1>
-            <h3>{{p.id_user}} - {{p.first_name}} - {{p.nickname}}</h3>
+            <h3>- {{p.first_name}} ({{p.nickname}})</h3>
+            <form action="{% url 'weather_bot:send_weather' p.id %}"
+            method="post" class="form">
+                {% csrf_token %}
+                <p><button name="submit">Отправить пользователю
+                    {{p.first_name}} погоду в Москве</button></p>
+            </form>
         </div>
     {% empty %}
-        <h3>No user has been registered yet.</h3>
+        <h3>Ни один пользователь ещё не зарегистрирован</h3>
     {% endfor %}
 {% endblock content %}
