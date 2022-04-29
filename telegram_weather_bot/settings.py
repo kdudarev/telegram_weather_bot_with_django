@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     # My apps
     'weather_bot',
 
+    # Third party apps
+    'bootstrap5',
+
     # Django apps
     'django.contrib.admin',
     'django.contrib.auth',

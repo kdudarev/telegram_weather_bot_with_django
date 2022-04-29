@@ -1,20 +1,53 @@
-{% block content %}
-    <h1>WeatherBot</h1>
-    <h2><a href="https://t.me/w_telebot">
-        Зарегистрироваться в телеграм боте</a></h2>
+{% load bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,
+     shrink-to-fit=no">
+    <title>WeatherBot</title>
+
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'weather_bot:home' %}">
+            <h1>WeatherBot</h1></a>
+    </div>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            <button type="button" class="btn btn-outline-secondary"><h4>
+                <a class="navbar-brand" href="https://t.me/w_telebot">
+                    Регистрация в телеграм боте</a></h4></button>
+        </ul>
+    </div>
+</nav>
+</br>
+<div class="container-fluid">
+    <h2>Зарегистрированные пользователи:</h2>
     </br>
-    <h1>Зарегистрированные пользователи:</h1>
     {% for p in object_list %}
-        <div>
-            <h3>- {{p.first_name}} ({{p.nickname}})</h3>
-            <form action="{% url 'weather_bot:send_weather' p.id %}"
-            method="post" class="form">
-                {% csrf_token %}
-                <p><button name="submit">Отправить пользователю
-                    {{p.first_name}} погоду в Москве</button></p>
-            </form>
-        </div>
+    <div>
+        <h5>- {{p.first_name}} ({{p.nickname}})</h5>
+        <form action="{% url 'weather_bot:send_weather' p.id %}"
+              method="post" class="form">
+            {% csrf_token %}
+            {% buttons %}
+            <p>
+                <button name="submit" class="btn btn-secondary">
+                    Отправить пользователю {{p.first_name}} погоду в Москве
+                </button>
+            </p>
+            {% endbuttons %}
+        </form>
+    </div>
     {% empty %}
-        <h3>Ни один пользователь ещё не зарегистрирован</h3>
+    <h3>Ни один пользователь ещё не зарегистрирован</h3>
     {% endfor %}
-{% endblock content %}
+</div>
+</body>
+</html>
